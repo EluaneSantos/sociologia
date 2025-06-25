@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz da Programação</title>
+  <style>
+    :root {
+      --primary-color: #2E8B57; /* Mudado para verde-mar */
+      --primary-light: #4CAF50; /* Um tom mais claro de verde */
+      --primary-dark: #1C5E3A; /* Um tom mais escuro de verde */
+      --accent-color: #ff6b00;
+      --background-light: #f8f9fa;
+      --text-dark: #1a1a1a;
+      --white: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    html {
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    *, *:before, *:after { box-sizing: inherit; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, var(--background-light), var(--white));
+      color: var(--text-dark);
+      padding: 10px;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      color: var(--white);
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header h1:first-child {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    .nav {
+      background: var(--primary-color);
+      padding: 15px 0;
+      text-align: center;
+      margin-bottom: 30px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .nav a {
+      color: var(--white);
+      text-decoration: none;
+      padding: 12px 25px;
+      margin: 0 10px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .nav a:hover {
+      background-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    .pergunta {
+      background: var(--white);
+      border: 2px solid var(--primary-light);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .pergunta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .pergunta input[type="radio"] {
+      margin-right: 12px;
+      accent-color: var(--primary-color);
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      cursor: pointer;
+      font-size: 1.1em;
+      color: var(--text-dark);
+    }
+
+    button {
+      display: block;
+      margin: 35px auto;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      color: var(--white);
+      font-weight: bold;
+      padding: 15px 35px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-color));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-interesse {
+      background: var(--white);
+      border: 2px solid var(--primary-light);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0 35px 0;
+      box-shadow: var(--shadow);
+    }
+
+    .form-interesse h2 {
+      font-size: 1.3em;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .form-interesse input[type="email"],
+    .form-interesse select {
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid var(--primary-light);
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--background-light);
+      color: var(--text-dark);
+      transition: var(--transition);
+    }
+
+    .form-interesse input[type="email"]:focus,
+    .form-interesse select:focus {
+      border-color: var(--accent-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
+    }
+
+    .form-interesse .radio-group {
+      display: flex;
+      gap: 25px;
+      margin: 15px 0;
+    }
+
+    .ponto {
+      position: absolute;
+      font-size: 3rem;
+      color: rgba(0, 71, 171, 0.2); /* Alterado para azul (#0047ab) com transparência */
+      animation: flutuar 5s infinite;
+    }
+
+    @keyframes flutuar {
+      0% {
+        top: 0;
+        opacity: 0.2;
+        transform: translateY(0);
+      }
+      50% {
+        top: 40%;
+        opacity: 0.4;
+        transform: translateY(-20px);
+      }
+      100% {
+        top: 100%;
+        opacity: 0.2;
+        transform: translateY(0);
+      }
+    }
+
+    #pontuacao {
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    /* Estilos para os pontos de interrogação */
+    .pontos-interrogacao {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #progress-container {
+      width: 100%;
+      background: #e0e7ef;
+      border-radius: 10px;
+      margin: 20px 0 30px 0;
+      height: 28px;
+      position: relative;
+      box-shadow: 0 2px 8px #d6eaf8;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #2E8B57, #4CAF50); /* Mudado para verde */
+      border-radius: 10px;
+      width: 0;
+      transition: width 0.5s cubic-bezier(.4,2,.6,1);
+    }
+    #progress-text {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      font-weight: bold;
+      color: #2E8B57; /* Mudado para verde-mar */
+      font-size: 1.1em;
+      letter-spacing: 1px;
+    }
+    label.selected {
+      background: #e0f0ff;
+      border-radius: 8px;
+      color: #2E8B57; /* Mudado para verde-mar */
+      font-weight: bold;
+      box-shadow: 0 2px 8px #d6eaf8;
+      padding-left: 8px;
+      transition: background 0.3s;
+    }
+    #back-to-top {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #2E8B57; /* Mudado para verde-mar */
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 54px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px #d6eaf8;
+      cursor: pointer;
+      z-index: 1000;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+      padding: 0;
+    }
+    #back-to-top:hover {
+      background: #ff6b00;
+      color: #fff;
+      transform: scale(1.13) translateY(-3px);
+      box-shadow: 0 4px 16px #ff6b0033;
+    }
+    .success-anim {
+      animation: fadeInUp 1.2s cubic-bezier(.4,2,.6,1);
+      background: linear-gradient(135deg, #e0f7ff 60%, #fff 100%);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px #d6eaf8;
+      display: inline-block;
+      padding: 32px 40px 40px 40px;
+      margin-top: 0;
+    }
+    @keyframes fadeInUp {
+      from { opacity:0; transform: translateY(40px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+    .pulse-gradient {
+      background: linear-gradient(90deg, #2E8B57, #ff6b00, #2E8B57); /* Mudado para verde-mar */
+      background-size: 200% 200%;
+      color: #fff;
+      padding: 12px 0;
+      border-radius: 10px;
+      animation: pulse 2s infinite linear, gradientMove 4s infinite linear;
+      font-size: 2em;
+      margin-bottom: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 12px #d6eaf8;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 #ff6b0033; }
+      50% { box-shadow: 0 0 16px 8px #ff6b0033; }
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    .share-btn {
+      display: inline-block;
+      background: #25d366;
+      color: #fff;
+      font-weight: bold;
+      padding: 12px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-right: 18px;
+      font-size: 1.1em;
+      box-shadow: 0 2px 8px #b2f2dd;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .share-btn:hover {
+      background: #128c7e;
+      transform: scale(1.07);
+    }
+    .retry-btn {
+      background: #2E8B57; /* Mudado para verde-mar */
+      color: #fff;
+      font-weight: bold;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #d6eaf8;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .retry-btn:hover {
+      background: #ff6b00;
+      transform: scale(1.07);
+    }
+    #mascote-senai {
+      animation: mascoteJump 1.2s cubic-bezier(.4,2,.6,1) 1, mascoteWave 2s infinite alternate;
+      margin-bottom: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @keyframes mascoteJump {
+      0% { transform: translateY(60px) scale(0.7); opacity:0; }
+      80% { transform: translateY(-10px) scale(1.1); opacity:1; }
+      100% { transform: translateY(0) scale(1); opacity:1; }
+    }
+    @keyframes mascoteWave {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(5deg); }
+    }
+    .styled-input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid #2E8B57; /* Mudado para verde-mar */
+      font-size: 1em;
+      margin-bottom: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 2px;
+      background: #f7fbff;
+      color: #1C5E3A; /* Mudado para um tom escuro de verde */
+      transition: border 0.2s;
+      outline: none;
+      display: block;
+    }
+    .styled-input:focus {
+      border: 2px solid #2E8B57; /* Mudado para verde-mar */
+      box-shadow: 0 0 0 3px rgba(46,139,87,0.12); /* Mudado para verde-mar */
+    }
+    #animated-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .symbol-float {
+      position: absolute;
+      font-size: 2.2em;
+      font-family: 'Segoe UI', 'Arial', monospace;
+      opacity: 0.13;
+      user-select: none;
+      will-change: transform, opacity;
+      filter: blur(0.2px);
+      transition: opacity 0.5s;
+    }
+    @media (max-width: 700px) {
+      body {
+        max-width: 100vw;
+        padding: 0 2vw;
+      }
+      .header {
+        padding: 18px 4vw;
+      }
+      .header h1 {
+        font-size: 1.5em;
+      }
+      .header h1:first-child {
+        font-size: 2em;
+      }
+      .nav {
+        font-size: 0.98em;
+        margin-bottom: 18px;
+        padding: 8px 0;
+      }
+      .nav a {
+        padding: 8px 10px;
+        margin: 0 3px;
+        font-size: 1em;
+      }
+      .pergunta, .form-interesse {
+        padding: 12px 6vw;
+        margin: 14px 0;
+      }
+      .form-interesse h2 {
+        font-size: 1.1em;
+      }
+      #progress-container {
+        height: 22px;
+        margin: 12px 0 18px 0;
+      }
+      #progress-text {
+        font-size: 1em;
+      }
+      button, .share-btn, .retry-btn {
+        font-size: 1em;
+        padding: 10px 12px;
+      }
+      #success-message .success-anim {
+        padding: 18px 4vw 24px 4vw;
+      }
+      #score-circle-container svg {
+        width: 70px !important;
+        height: 70px !important;
+      }
+      .pulse-gradient {
+        font-size: 1.2em !important;
+      }
+      #back-to-top {
+        width: 40px;
+        height: 40px;
+      }
+      #back-to-top svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: 10px 2vw;
+      }
+      .header h1 {
+        font-size: 1.1em;
+      }
+      .header h1:first-child {
+        font-size: 1.4em;
+      }
+      .nav {
+        font-size: 0.93em;
+        padding: 6px 0;
+      }
+      .pergunta, .form-interesse {
+        padding: 8px 2vw;
+        margin: 10px 0;
+      }
+      .form-interesse h2 {
+        font-size: 1em;
+      }
+      #progress-container {
+        height: 16px;
+        margin: 8px 0 12px 0;
+      }
+      #progress-text {
+        font-size: 0.95em;
+      }
+      button, .share-btn, .retry-btn {
+        font-size: 0.98em;
+        padding: 8px 8px;
+      }
+      #success-message .success-anim {
+        padding: 10px 2vw 16px 2vw;
+      }
+      #score-circle-container svg {
+        width: 48px !important;
+        height: 48px !important;
+      }
+      .pulse-gradient {
+        font-size: 1em !important;
+      }
+      #back-to-top {
+        width: 32px;
+        height: 32px;
+      }
+      #back-to-top svg {
+        width: 15px;
+        height: 15px
+      }
+    }
+
+    @media (max-width: 600px) {
+      #animated-bg .symbol-float {
+        font-size: 1.1em !important;
+        opacity: 0.18 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+  <!-- Cabeçalho com fundo azul -->
+  <div class="header">
+    <h1>CEPAR</h1>
+    <h1>Banheiros secos e públicos</h1>
+  </div>
+
+  <!-- Barra de Navegação -->
+  <div class="nav">
+    <a href="index.html">Home</a>
+    <a href="solucionar.html">Como Solucionar</a>
+    <a href="quiz.html">Quiz</a>
+  </div>
+  
+  <h1>🚽 Quiz da Sociologia</h1>
+  <form id="quiz-form">
+    <!-- Perguntas 1 a 5 -->
+    <div class="pergunta">
+      <p><strong>1.</strong> 🚽 Banheiros secos ajudam a economizar água, pois não usam descarga.</p>
+      <label><input type="radio" name="q1" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q1" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>2.</strong> 🌍 Na África do Sul, os banheiros secos surgiram como solução pra locais sem acesso à água potável.</p>
+      <label><input type="radio" name="q2" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q2" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>3.</strong> 💩 Banheiros secos jogam os dejetos direto nos rios.</p>
+      <label><input type="radio" name="q3" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q3" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>4.</strong> ♻️ O resíduo dos banheiros secos pode ser transformado em adubo.</p>
+      <label><input type="radio" name="q4" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q4" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>5.</strong> 🚫 Banheiros secos gastam mais água do que banheiros comuns.</p>
+      <label><input type="radio" name="q5" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q5" value="F"> Falso</label>
+    </div>
+
+    <!-- Perguntas 6 a 10 -->
+    <div class="pergunta">
+      <p><strong>6.</strong>🇫🇷 Na França, os banheiros secos são usados até em eventos e espaços públicos.</p>
+      <label><input type="radio" name="q6" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q6" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>7.</strong>🌿 Além de ajudar o meio ambiente, os banheiros secos também melhoram o saneamento em comunidades carentes.</p>
+      <label><input type="radio" name="q7" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q7" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>8.</strong>🙅‍♀️ Todo mundo ama a ideia de banheiro seco, não existe preconceito nem resistência.</p>
+      <label><input type="radio" name="q8" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q8" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>9.</strong>💧 O principal objetivo dos banheiros secos é reduzir o desperdício de água e ajudar no meio ambiente.</p>
+      <label><input type="radio" name="q9" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q9" value="F"> Falso</label>
+    </div>
+    <div class="pergunta">
+      <p><strong>10.</strong>🏗️ Instalar um banheiro seco é impossível em áreas urbanas.</p>
+      <label><input type="radio" name="q10" value="V" required> Verdadeiro</label>
+      <label><input type="radio" name="q10" value="F"> Falso</label>
+    </div>
+
+    <!-- Formulário de interesse nos cursos SENAI 2026 -->
+    <div class="pergunta form-interesse">
+      <h2>Tem interesse em saber mais do nosso projeto?</h2>
+      <label for="nome">Seu nome:</label>
+      <input type="text" id="nome" name="nome" required autocomplete="name" maxlength="60" class="styled-input">
+      <label for="telefone">Telefone (WhatsApp):</label>
+      <input type="tel" id="telefone" name="telefone" required pattern="\(\d{2}\) \d{5}-\d{4}" placeholder="(99) 99999-9999" maxlength="15" autocomplete="tel" class="styled-input">
+      <label for="email">Seu e-mail:</label>
+      <input type="email" id="email" name="email" required>
+      <label style="margin-top: 10px;">Gostou do projeto?</label>
+      <div class="radio-group">
+        <label><input type="radio" name="interesse" value="sim" required> Sim</label>
+        <label><input type="radio" name="interesse" value="nao" required> Não</label>
+      </div>
+      <label for="curso">Daria uma nota pra apresentação?</label>
+      <select id="curso" name="curso" required>
+        <option value="">Selecione...</option>
+        <option value="Metalmecânica">10</option>
+        <option value="Polímeros">7</option>
+        <option value="Alimentos">4</option>
+        <option value="Programador de Sistemas">0</option>
+        <option value="Todos">Nenhuma</option>
+      </select>
+    </div>
+
+    <!-- Barra de Progresso -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+      <span id="progress-text">0/10</span>
+    </div>
+
+    <button type="submit">🚀 Finalizar Quiz</button>
+  </form>
+
+  <div id="success-message" style="display:none;text-align:center;margin-top:40px;">
+    <div class="success-anim">
+      <div id="score-circle-container" style="margin-bottom:18px;"></div>
+      <h2 id="score-animated" class="pulse-gradient" style="font-size:2.2em;margin-bottom:0;"></h2>
+      <div id="score-feedback" style="font-size:1.3em;margin:18px 0 10px 0;"></div>
+      <div id="course-suggestion" style="font-size:1.1em;margin-bottom:18px;"></div>
+      <div style="margin:30px 0;">
+        <a id="share-whatsapp" href="#" target="_blank" class="share-btn">Compartilhar no WhatsApp</a>
+        <button id="retry-quiz" class="retry-btn">Refazer Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetes -->
+  <canvas id="confetti-canvas" style="position:fixed;pointer-events:none;top:0;left:0;width:100vw;height:100vh;z-index:999;display:none;"></canvas>
+
+  <!-- Botão Voltar ao Topo -->
+  <button id="back-to-top" title="Voltar ao topo" aria-label="Voltar ao topo">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="display:block;margin:auto;" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="12" fill="none"/>
+      <path d="M12 18V6M12 6L7 11M12 6L17 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <!-- Fundo animado de símbolos -->
+  <div id="animated-bg"></div>
+
+  <script>
+    // Barra de Progresso
+    const totalQuestions = 10;
+    const radios = Array.from(document.querySelectorAll('.pergunta input[type="radio"]')).filter(r => /^q\d+$/.test(r.name));
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    function updateProgress() {
+      const answered = new Set();
+      radios.forEach(r => { if(r.checked) answered.add(r.name); });
+      const percent = (answered.size / totalQuestions) * 100;
+      progressBar.style.width = percent + '%';
+      progressText.textContent = `${answered.size}/${totalQuestions}`;
+    }
+    radios.forEach(r => r.addEventListener('change', updateProgress));
+    updateProgress();
+
+    // Destaque de Alternativa Selecionada
+    document.querySelectorAll('.pergunta').forEach(pergunta => {
+      pergunta.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          pergunta.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+          this.parentElement.classList.add('selected');
+        });
+      });
+    });
+
+    // Gabarito das respostas
+    const gabarito = {
+      q1: 'V', q2: 'V', q3: 'F', q4: 'V', q5: 'F',
+      q6: 'V', q7: 'V', q8: 'F', q9: 'V', q10: 'F'
+    };
+
+    // Adicionar máscara de telefone
+    const telInput = document.getElementById('telefone');
+    telInput.addEventListener('input', function(e) {
+      let v = this.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.slice(0,11);
+      if (v.length > 6) this.value = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+      else if (v.length > 2) this.value = `(${v.slice(0,2)}) ${v.slice(2)}`;
+      else if (v.length > 0) this.value = `(${v}`;
+    });
+
+    // Submissão do formulário com pontuação e feedback criativo
+    document.getElementById('quiz-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      // Validação dos campos extras
+      const nome = this.elements['nome'].value.trim();
+      const telefone = this.elements['telefone'].value.trim();
+      const email = this.elements['email'].value.trim();
+      const interesse = this.elements['interesse'].value;
+      const curso = this.elements['curso'].value;
+      const telPattern = /^\(\d{2}\) \d{5}-\d{4}$/;
+      if (!nome) {
+        alert('Por favor, preencha seu nome.');
+        this.elements['nome'].focus();
+        return;
+      }
+      if (!telPattern.test(telefone)) {
+        alert('Por favor, preencha um telefone válido no formato (99) 99999-9999.');
+        this.elements['telefone'].focus();
+        return;
+      }
+      if (!email) {
+        alert('Por favor, preencha seu e-mail.');
+        this.elements['email'].focus();
+        return;
+      }
+      // Corrigir e calcular pontuação
+      let acertos = 0;
+      for (let i = 1; i <= 10; i++) {
+        const q = 'q' + i;
+        const marcada = this.elements[q]?.value;
+        if (marcada && marcada === gabarito[q]) acertos++;
+      }
+      // Enviar dados para o backend
+      await fetch('/api/save-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome,
+          telefone,
+          email,
+          interesse,
+          curso,
+          pontuacao: acertos
+        })
+      });
+      // Mensagem personalizada
+      let feedback, corBarra, cursoSugestao;
+      if (acertos === 10) {
+        feedback = 'Uau! Você é um mestre da Sociologia e Meio Ambiente!';
+        corBarra = '#25d366';
+      cursoSugestao = 'Explore os projetos do CEPAR para começar sua jornada!';
+      } else if (acertos >= 7) {
+        feedback = 'Ótimo resultado! Você está no caminho certo!';
+        corBarra = '#ffb300';
+      cursoSugestao = 'Explore os projetos do CEPAR para começar sua jornada!';
+      } else if (acertos >= 4) {
+        feedback = 'Bom esforço! Continue estudando e você vai longe!';
+        corBarra = '#ff6b00';
+      cursoSugestao = 'Explore os projetos do CEPAR para começar sua jornada!';
+      } else {
+        feedback = 'Não desanime! O importante é aprender e tentar de novo!';
+        corBarra = '#e53935';
+      cursoSugestao = 'Explore os projetos do CEPAR para começar sua jornada!';
+      }
+      // Animação de confetes especial para nota alta
+      showConfetti(acertos >= 7 ? 250 : 120);
+      document.getElementById('quiz-form').style.display = 'none';
+      setTimeout(() => {
+        // Barra de progresso circular
+        const percent = Math.round((acertos/10)*100);
+        document.getElementById('score-circle-container').innerHTML = `
+          <svg width="110" height="110">
+            <circle cx="55" cy="55" r="48" stroke="#e0e7ef" stroke-width="10" fill="none"/>
+            <circle id="score-bar" cx="55" cy="55" r="48" stroke="${corBarra}" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="${2*Math.PI*48}" stroke-dashoffset="${2*Math.PI*48}"/>
+            <text id="score-text" x="55" y="65" text-anchor="middle" font-size="2.2em" font-weight="bold" fill="${corBarra}">0</text>
+          </svg>
+        `;
+        // Animação do círculo e número
+        let current = 0;
+        const max = acertos;
+        const circle = document.getElementById('score-bar');
+        const text = document.getElementById('score-text');
+        const totalLen = 2*Math.PI*48;
+        function animateScore() {
+          if (current <= max) {
+            text.textContent = current;
+            circle.setAttribute('stroke-dashoffset', totalLen - (totalLen * (current/10)));
+            current++;
+            setTimeout(animateScore, 80);
+          } else {
+            text.textContent = acertos;
+            circle.setAttribute('stroke-dashoffset', totalLen - (totalLen * (acertos/10)));
+          }
+        }
+        animateScore();
+        document.getElementById('score-animated').innerHTML = `Você fez <span style='color:${corBarra};font-size:1.2em;'>${acertos}/10</span>!`;
+        document.getElementById('score-feedback').innerHTML = feedback;
+        document.getElementById('course-suggestion').innerHTML = cursoSugestao;
+        document.getElementById('success-message').style.display = 'block';
+      }, 1200);
+    });
+    // Compartilhar no WhatsApp
+    document.getElementById('share-whatsapp').onclick = function() {
+      const score = document.getElementById('score-animated').textContent;
+      const msg = encodeURIComponent(`Acabei de fazer o Quiz SENAI e minha pontuação foi: ${score}! Faça você também: ${window.location.href}`);
+      this.href = `https://wa.me/?text=${msg}`;
+    };
+    // Refazer Quiz
+    document.getElementById('retry-quiz').onclick = function() {
+      document.getElementById('success-message').style.display = 'none';
+      document.getElementById('quiz-form').reset();
+      document.getElementById('quiz-form').style.display = 'block';
+      updateProgress();
+      document.querySelectorAll('label.selected').forEach(l => l.classList.remove('selected'));
+      window.scrollTo({top:0, behavior:'smooth'});
+    };
+    // Confetes mais intensos
+    function showConfetti(qty=150) {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let confetti = [];
+      for(let i=0;i<qty;i++) {
+        confetti.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*-canvas.height,
+          r: Math.random()*6+4,
+          d: Math.random()*Math.PI*2,
+          color: `hsl(${Math.random()*360},90%,60%)`,
+          tilt: Math.random()*10-5
+        });
+      }
+      let frame=0;
+      function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, c.r, 0, 2*Math.PI);
+          ctx.fillStyle = c.color;
+          ctx.fill();
+        });
+        update();
+        // Verifica se todos os confetes já saíram da tela
+        const allGone = confetti.every(c => c.y > canvas.height + 20);
+        if (!allGone) {
+          requestAnimationFrame(draw);
+        } else {
+          canvas.style.display = 'none';
+        }
+      }
+      function update() {
+        confetti.forEach(c => {
+          c.y += Math.cos(c.d)+2.5;
+          c.x += Math.sin(c.d)*1.2;
+          c.d += 0.02;
+        });
+      }
+      draw();
+    }
+
+    // Botão Voltar ao Topo
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      backToTop.style.display = window.scrollY > 200 ? 'block' : 'none';
+    });
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    // Fundo animado de símbolos
+    const symbols = Array(7).fill('?').concat(['!', '{', '}', '<', '>', '★', '✓', 'Σ', 'π', '∞', '§']);
+    const colors = ['#0047ab', '#ff6b00', '#25d366', '#ffb300', '#e53935', '#0077cc'];
+    const bg = document.getElementById('animated-bg');
+    const symbolCount = window.innerWidth < 600 ? 16 : 36;
+    function randomBetween(a, b) { return a + Math.random() * (b - a); }
+    function createSymbol() {
+      const el = document.createElement('span');
+      el.className = 'symbol-float';
+      // Mais chance de ser '?'
+      const isQuestion = Math.random() < 0.45;
+      el.textContent = isQuestion ? '?' : symbols[Math.floor(Math.random()*symbols.length)];
+      el.style.left = randomBetween(0, 95) + 'vw';
+      el.style.top = randomBetween(-10, 90) + 'vh';
+      // Destaque para '?'
+      if (el.textContent === '?') {
+        el.style.color = '#0047ab';
+        el.style.fontSize = randomBetween(2.2, 4.2) + 'em';
+        el.style.opacity = randomBetween(0.22, 0.32);
+        el.style.fontWeight = 'bold';
+        el.style.textShadow = '0 2px 12px #0047ab33, 0 0 2px #fff';
+      } else {
+        el.style.color = colors[Math.floor(Math.random()*colors.length)];
+        el.style.fontSize = randomBetween(1.2, 2.2) + 'em';
+        el.style.opacity = randomBetween(0.13, 0.22);
+        el.style.fontWeight = 'normal';
+        el.style.textShadow = 'none';
+      }
+      el.style.transform = `rotate(${randomBetween(-30,30)}deg)`;
+      bg.appendChild(el);
+      animateSymbol(el);
+    }
+    function animateSymbol(el) {
+      let y = parseFloat(el.style.top);
+      let x = parseFloat(el.style.left);
+      const speed = randomBetween(0.10, 0.28);
+      const drift = randomBetween(-0.09, 0.09);
+      const rot = randomBetween(-0.2, 0.2);
+      function frame() {
+        y += speed;
+        x += drift;
+        el.style.top = y + 'vh';
+        el.style.left = x + 'vw';
+        el.style.transform = `rotate(${parseFloat(el.style.transform.replace(/[^-\d.]/g,'')) + rot}deg)`;
+        if (y > 105) {
+          y = randomBetween(-12, -2);
+          x = randomBetween(0, 95);
+          el.style.left = x + 'vw';
+          // Redefinir destaque se virar '?'
+          const isQuestion = Math.random() < 0.45;
+          el.textContent = isQuestion ? '?' : symbols[Math.floor(Math.random()*symbols.length)];
+          if (el.textContent === '?') {
+            el.style.color = '#0047ab';
+            el.style.fontSize = randomBetween(2.2, 4.2) + 'em';
+            el.style.opacity = randomBetween(0.22, 0.32);
+            el.style.fontWeight = 'bold';
+            el.style.textShadow = '0 2px 12px #0047ab33, 0 0 2px #fff';
+          } else {
+            el.style.color = colors[Math.floor(Math.random()*colors.length)];
+            el.style.fontSize = randomBetween(1.2, 2.2) + 'em';
+            el.style.opacity = randomBetween(0.13, 0.22);
+            el.style.fontWeight = 'normal';
+            el.style.textShadow = 'none';
+          }
+        }
+        requestAnimationFrame(frame);
+      }
+      frame();
+    }
+    for(let i=0;i<symbolCount;i++) createSymbol();
+  </script>
+
+  <!-- Contêiner de pontos de interrogação -->
+  <div class="pontos-interrogacao">
+    <div class="ponto">?</div>
+    <div class="ponto">?</div>
+    <div class="ponto">?</div>
+    <div class="ponto">?</div>
+    <div class="ponto">?</div>
+  </div>
+
+</body>
+</html>
